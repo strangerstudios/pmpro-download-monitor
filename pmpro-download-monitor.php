@@ -71,6 +71,7 @@ function pmprodlm_shortcode_download_content( $content, $download_id, $atts ) {
 			if ( $download->exists() ) {
 				$content .= '<a href="' . pmpro_url('levels') . '">' . $download->get_the_title() . '</a>';
 				$content .= ' (' . __('Membership Required','pmprodlm') . ': ' . $post_membership_levels_names . ')';
+				$content = apply_filters("pmprodlm_shortcode_download_content_filter", $content);
 			} else {
 				$content = '[' . __( 'Download not found', 'download-monitor' ) . ']';
 			}

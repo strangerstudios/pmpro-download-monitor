@@ -32,7 +32,10 @@ Requires Download Monitor (https://wordpress.org/plugins/download-monitor/) and 
 1. Check the box for each level that can access this download in the "Require Membership" meta box (below the Publish box in the right sidebar). 
 1. Save your changes by clicking the "Update" button (or "Publish" if you are creating a new download).
 
+You can filter the output of the [download] shortcode displayed to a non-member by using the filter: pmprodlm_shortcode_download_content_filter. This will alter the message shown to a visitor that is not logged in or a logged in user that doesn't meet membership requirements.
+
 == Changelog ==
 
 = .1 =
+* Added pmprodlm_shortcode_download_content_filter filter for non-member download shortcode output.
 * Initial release.
