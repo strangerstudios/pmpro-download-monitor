@@ -23,8 +23,14 @@ add_action( "init", "pmprodlm_cpt_init", 20 );
  * Require Membership on the Download
 */
 function pmprodlm_can_download( $download, $version ) {
+	$download_id = $version->post->ID;
 	if ( function_exists( 'pmpro_hasMembershipLevel' ) ) {
-		if ( ! pmpro_has_membership_access( $version->post->ID ) ) {
+		//need to setup post global
+		global $post;
+		$post = get_post($download_id);
+
+		//check for membership
+		if ( !pmpro_has_membership_access($download_id) ) {
 			$download = false;
 		}
 	}
