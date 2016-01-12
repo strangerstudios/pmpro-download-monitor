@@ -38,9 +38,22 @@ function pmprodlm_can_download( $download, $version ) {
 }
 add_filter( 'dlm_can_download', 'pmprodlm_can_download', 10, 2 );
 
+function pmprodlm_dlm_get_template_part( $template, $slug, $name ) {
+	if($name == 'pmpro')
+	{
+		$template = trailingslashit( dirname(__FILE__) ) . "templates/content-download-pmpro.php";
+	}
+	elseif(strpos($name, "pmpro_") !== false)
+	{
+		$template = trailingslashit( dirname(__FILE__) ) . "templates/content-download-" . $name . ".php";
+	}
+	return $template;
+}
+add_filter('dlm_get_template_part', 'pmprodlm_dlm_get_template_part', 10, 3);
+
 function pmprodlm_shortcode_download_content( $content, $download_id, $atts ) {
 	global $current_user;
-	if ( function_exists( 'pmpro_hasMembershipLevel' ) ) {
+	if(empty($atts['template']) && (function_exists( 'pmpro_hasMembershipLevel' )) ) {
 		if ( !pmpro_has_membership_access( $download_id ) ) 
 		{
 			$hasaccess = pmpro_has_membership_access($download_id, NULL, true);
@@ -75,7 +88,12 @@ function pmprodlm_shortcode_download_content( $content, $download_id, $atts ) {
 			
 			$download = new DLM_Download( $download_id );
 			if ( $download->exists() ) {
-				$content .= '<a href="' . pmpro_url('levels') . '">' . $download->get_the_title() . '</a>';
+				$content .= '<a href="';
+				if(count($post_membership_levels_ids) > 1)
+					$content .= pmpro_url('levels');
+				else
+					$content .= pmpro_url("checkout", "?level=" . $post_membership_levels_ids[0], "https");
+				$content .= '">' . $download->get_the_title() . '</a>';
 				$content .= ' (' . __('Membership Required','pmprodlm') . ': ' . $post_membership_levels_names . ')';
 				$content = apply_filters("pmprodlm_shortcode_download_content_filter", $content);
 			} else {
@@ -86,6 +104,63 @@ function pmprodlm_shortcode_download_content( $content, $download_id, $atts ) {
 	return $content;
 }
 add_filter('dlm_shortcode_download_content', 'pmprodlm_shortcode_download_content', 10, 3);
+
+function pmprodlm_dlm_no_access_after_message($download) {
+	global $current_user;
+	if ( function_exists( 'pmpro_hasMembershipLevel' ) ) {
+		if ( !pmpro_has_membership_access( $download->id ) ) 
+		{
+			$hasaccess = pmpro_has_membership_access($download->id, NULL, true);
+			if(is_array($hasaccess))
+			{
+				//returned an array to give us the membership level values
+				$post_membership_levels_ids = $hasaccess[1];
+				$post_membership_levels_names = $hasaccess[2];
+				$hasaccess = $hasaccess[0];
+			}
+			if(empty($post_membership_levels_ids))
+				$post_membership_levels_ids = array();
+			if(empty($post_membership_levels_names))
+				$post_membership_levels_names = array();
+		
+			 //hide levels which don't allow signups by default
+			if(!apply_filters("pmpro_membership_content_filter_disallowed_levels", false, $post_membership_levels_ids, $post_membership_levels_names))
+			{
+				foreach($post_membership_levels_ids as $key=>$id)
+				{
+					//does this level allow registrations?
+					$level_obj = pmpro_getLevel($id);
+					if(!$level_obj->allow_signups)
+					{
+						unset($post_membership_levels_ids[$key]);
+						unset($post_membership_levels_names[$key]);
+					}
+				}
+			}
+		
+			$pmpro_content_message_pre = '<div class="pmpro_content_message">';
+			$pmpro_content_message_post = '</div>';
+			$content = '';
+			$sr_search = array("!!levels!!", "!!referrer!!");
+			$sr_replace = array(pmpro_implodeToEnglish($post_membership_levels_names), urlencode(site_url($_SERVER['REQUEST_URI'])));
+			//get the correct message to show at the bottom
+			if($current_user->ID)
+			{
+				//not a member
+				$newcontent = apply_filters("pmpro_non_member_text_filter", stripslashes(pmpro_getOption("nonmembertext")));
+				$content .= $pmpro_content_message_pre . str_replace($sr_search, $sr_replace, $newcontent) . $pmpro_content_message_post;
+			}
+			else
+			{
+				//not logged in!
+				$newcontent = apply_filters("pmpro_not_logged_in_text_filter", stripslashes(pmpro_getOption("notloggedintext")));
+				$content .= $pmpro_content_message_pre . str_replace($sr_search, $sr_replace, $newcontent) . $pmpro_content_message_post;
+			}
+		}
+	}
+	echo $content;	
+}
+add_action('dlm_no_access_after_message', 'pmprodlm_dlm_no_access_after_message', 10, 2);
 
 /*
 Function to add links to the plugin row meta
