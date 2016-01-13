@@ -19,6 +19,41 @@ function pmprodlm_cpt_init() {
 }
 add_action( "init", "pmprodlm_cpt_init", 20 );
 
+function pmprodlm_getDownloadLevels($dlm_download) 
+{
+	$hasaccess = pmpro_has_membership_access($dlm_download->id, NULL, true);
+	if(is_array($hasaccess))
+	{
+		//returned an array to give us the membership level values
+		$download_membership_levels_ids = $hasaccess[1];
+		$download_membership_levels_names = $hasaccess[2];
+		$hasaccess = $hasaccess[0];
+	}
+	if(empty($download_membership_levels_ids))
+		$download_membership_levels_ids = array();
+	if(empty($download_membership_levels_names))
+		$download_membership_levels_names = array();
+
+	 //hide levels which don't allow signups by default
+	if(!apply_filters("pmpro_membership_content_filter_disallowed_levels", false, $download_membership_levels_ids, $download_membership_levels_names))
+	{
+		foreach($download_membership_levels_ids as $key=>$id)
+		{
+			//does this level allow registrations?
+			$level_obj = pmpro_getLevel($id);
+			if(!$level_obj->allow_signups)
+			{
+				unset($download_membership_levels_ids[$key]);
+				unset($download_membership_levels_names[$key]);
+			}
+		}
+	}
+
+	$download_membership_levels_names = pmpro_implodeToEnglish($download_membership_levels_names, 'or');
+	
+	return array($download_membership_levels_ids, $download_membership_levels_names);
+}
+
 /*
  * Require Membership on the Download
 */
@@ -56,47 +91,21 @@ function pmprodlm_shortcode_download_content( $content, $download_id, $atts ) {
 	if(empty($atts['template']) && (function_exists( 'pmpro_hasMembershipLevel' )) ) {
 		if ( !pmpro_has_membership_access( $download_id ) ) 
 		{
-			$hasaccess = pmpro_has_membership_access($download_id, NULL, true);
-			if(is_array($hasaccess))
+			$dlm_download = new DLM_Download( $download_id );
+			if ( $dlm_download->exists() ) 
 			{
-				//returned an array to give us the membership level values
-				$post_membership_levels_ids = $hasaccess[1];
-				$post_membership_levels_names = $hasaccess[2];
-				$hasaccess = $hasaccess[0];
-			}
-			if(empty($post_membership_levels_ids))
-				$post_membership_levels_ids = array();
-			if(empty($post_membership_levels_names))
-				$post_membership_levels_names = array();
-		
-			 //hide levels which don't allow signups by default
-			if(!apply_filters("pmpro_membership_content_filter_disallowed_levels", false, $post_membership_levels_ids, $post_membership_levels_names))
-			{
-				foreach($post_membership_levels_ids as $key=>$id)
-				{
-					//does this level allow registrations?
-					$level_obj = pmpro_getLevel($id);
-					if(!$level_obj->allow_signups)
-					{
-						unset($post_membership_levels_ids[$key]);
-						unset($post_membership_levels_names[$key]);
-					}
-				}
-			}
-		
-			$post_membership_levels_names = pmpro_implodeToEnglish($post_membership_levels_names, 'or');
-			
-			$download = new DLM_Download( $download_id );
-			if ( $download->exists() ) {
+				$download_membership_levels = pmprodlm_getDownloadLevels($dlm_download);	
 				$content .= '<a href="';
-				if(count($post_membership_levels_ids) > 1)
+				if(count($download_membership_levels[0]) > 1)
 					$content .= pmpro_url('levels');
 				else
-					$content .= pmpro_url("checkout", "?level=" . $post_membership_levels_ids[0], "https");
-				$content .= '">' . $download->get_the_title() . '</a>';
-				$content .= ' (' . __('Membership Required','pmprodlm') . ': ' . $post_membership_levels_names . ')';
+					$content .= pmpro_url("checkout", "?level=" . $download_membership_levels[0][0], "https");
+				$content .= '">' . $dlm_download->get_the_title() . '</a>';
+				$content .= ' (' . __('Membership Required','pmprodlm') . ': ' . $download_membership_levels[1] . ')';
 				$content = apply_filters("pmprodlm_shortcode_download_content_filter", $content);
-			} else {
+			} 
+			else 
+			{
 				$content = '[' . __( 'Download not found', 'download-monitor' ) . ']';
 			}
 		}
