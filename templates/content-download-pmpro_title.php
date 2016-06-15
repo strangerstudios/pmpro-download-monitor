@@ -21,7 +21,7 @@ if ( function_exists( 'pmpro_hasMembershipLevel' ) ) {
 				else
 					echo pmpro_url("checkout", "?level=" . $download_membership_levels[0][0], "https");
 			?>"><?php echo $dlm_download->get_the_title(); ?></a>
-			<?php _e('Membership Required','pmprodlm'); ?>: <?php echo $download_membership_levels[1]; ?>
+			<?php _e('Membership Required','pmprodlm'); ?><?php echo !empty($download_membership_levels[1]) ? ': ' : null; ?><?php echo $download_membership_levels[1]; ?>
 			<?php
 		} 
 		else 
