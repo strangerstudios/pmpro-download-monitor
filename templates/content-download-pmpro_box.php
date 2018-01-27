@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 global $current_user;
 if ( function_exists( 'pmpro_hasMembershipLevel' ) ) {
-	if ( !pmpro_has_membership_access( $dlm_download->id ) ) 
+	if ( !pmpro_has_membership_access( $dlm_download->get_id() ) ) 
 	{
 		$download_membership_levels = pmprodlm_getDownloadLevels($dlm_download);
 

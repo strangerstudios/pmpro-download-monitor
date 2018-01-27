@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, membership, memberships, download monitor, restrict downloads
 Requires at least: 3.5
-Tested up to: 4.4
-Stable tag: .2
+Tested up to: 4.9.2
+Stable tag: .2.1
 
 Require membership for downloads when using the Download Monitor plugin.
 
@@ -37,6 +37,9 @@ When using the [download] shortcode you can optionally specify the appropriate "
 If you do not specify a template, the output of the [download] shortcode can be filtered for a non-member by using the filter: pmprodlm_shortcode_download_content_filter. This will alter the message shown to a visitor that is not logged in or a logged in user that doesn't meet membership requirements.
 
 == Changelog ==
+= .2.1 =
+* BUG FIX: Using the get_id() method to get the id of downloads now that the ->id property is private.
+
 = .2 =
 * ENHANCEMENT/FIX: Would show ':' if membership was required but level was inaccessible (signup allowed = no)
 

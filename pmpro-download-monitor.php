@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Download Monitor Integration Add On
 Plugin URI: http://www.paidmembershipspro.com/pmpro-download-monitor/
 Description: Require membership for downloads when using the Download Monitor plugin.
-Version: .2
+Version: .2.1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 
@@ -21,7 +21,7 @@ add_action( "init", "pmprodlm_cpt_init", 20 );
 
 function pmprodlm_getDownloadLevels($dlm_download) 
 {
-	$hasaccess = pmpro_has_membership_access($dlm_download->id, NULL, true);
+	$hasaccess = pmpro_has_membership_access($dlm_download->get_id(), NULL, true);
 	if(is_array($hasaccess))
 	{
 		//returned an array to give us the membership level values
@@ -73,7 +73,7 @@ function pmprodlm_can_download( $download, $version ) {
 }
 add_filter( 'dlm_can_download', 'pmprodlm_can_download', 10, 2 );
 
-function pmprodlm_dlm_get_template_part( $template, $slug, $name ) {
+function pmprodlm_dlm_get_template_part( $template, $slug, $name ) {	
 	if($name == 'pmpro')
 	{
 		$template = trailingslashit( dirname(__FILE__) ) . "templates/content-download-pmpro.php";
@@ -117,9 +117,9 @@ add_filter('dlm_shortcode_download_content', 'pmprodlm_shortcode_download_conten
 function pmprodlm_dlm_no_access_after_message($download) {
 	global $current_user;
 	if ( function_exists( 'pmpro_hasMembershipLevel' ) ) {
-		if ( !pmpro_has_membership_access( $download->id ) ) 
+		if ( !pmpro_has_membership_access( $download->get_id() ) ) 
 		{
-			$hasaccess = pmpro_has_membership_access($download->id, NULL, true);
+			$hasaccess = pmpro_has_membership_access($download->get_id(), NULL, true);
 			if(is_array($hasaccess))
 			{
 				//returned an array to give us the membership level values
