@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Download Monitor Integration Add On
 Plugin URI: http://www.paidmembershipspro.com/pmpro-download-monitor/
 Description: Require membership for downloads when using the Download Monitor plugin.
-Version: .1
+Version: .2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 
