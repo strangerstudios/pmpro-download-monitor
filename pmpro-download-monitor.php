@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Paid Memberships Pro - Download Monitor Integration Add On
-Plugin URI: http://www.paidmembershipspro.com/pmpro-download-monitor/
+Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-download-monitor/
 Description: Require membership for downloads when using the Download Monitor plugin.
-Version: .2.1
-Author: Stranger Studios
-Author URI: http://www.strangerstudios.com
+Version: .2.2
+Author: Paid Memberships Pro
+Author URI: https://www.paidmembershipspro.com
 
 /*
  * Add Require Membership box to dlm_download CPT
@@ -185,8 +185,8 @@ function pmprodlm_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-download-monitor.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plus-add-ons/pmpro-download-monitor/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
-			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/pmpro-download-monitor/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
 	}
