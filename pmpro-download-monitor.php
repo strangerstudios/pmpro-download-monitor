@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Paid Memberships Pro - Download Monitor Integration Add On
-Plugin URI: http://www.paidmembershipspro.com/pmpro-download-monitor/
+Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-download-monitor/
 Description: Require membership for downloads when using the Download Monitor plugin.
-Version: .2.1
-Author: Stranger Studios
-Author URI: http://www.strangerstudios.com
+Version: .2.2
+Author: Paid Memberships Pro
+Author URI: https://www.paidmembershipspro.com
 
 /*
  * Add Require Membership box to dlm_download CPT
@@ -87,32 +87,39 @@ function pmprodlm_dlm_get_template_part( $template, $slug, $name ) {
 add_filter('dlm_get_template_part', 'pmprodlm_dlm_get_template_part', 10, 3);
 
 function pmprodlm_shortcode_download_content( $content, $download_id, $atts ) {
-	global $current_user;
-	if(empty($atts['template']) && (function_exists( 'pmpro_hasMembershipLevel' )) ) {
-		if ( !pmpro_has_membership_access( $download_id ) ) 
-		{
-			$dlm_download = new DLM_Download( $download_id );
-			if ( $dlm_download->exists() ) 
-			{
-				$download_membership_levels = pmprodlm_getDownloadLevels($dlm_download);	
+	if ( empty( $atts['template'] ) && function_exists( 'pmpro_hasMembershipLevel' ) ) {
+		try {
+			$dlm_download = download_monitor()->service( 'download_repository' )->retrieve_single( $download_id );
+			if ( ! pmpro_has_membership_access( $dlm_download->post->ID ) ) {
+				$download_membership_levels = pmprodlm_getDownloadLevels( $dlm_download );	
+				
+				// Build the download shortcode output with Membership Levels. 
 				$content .= '<a href="';
-				if(count($download_membership_levels[0]) > 1)
+				
+				if ( count( $download_membership_levels[0] ) > 1 ) {
 					$content .= pmpro_url('levels');
-				else
-					$content .= pmpro_url("checkout", "?level=" . $download_membership_levels[0][0], "https");
+				} else {
+					$content .= pmpro_url( 'checkout', '?level=' . $download_membership_levels[0][0], 'https' );
+				}
+
 				$content .= '">' . $dlm_download->get_the_title() . '</a>';
-				$content .= ' (' . __('Membership Required','pmprodlm') . ': ' . $download_membership_levels[1] . ')';
-				$content = apply_filters("pmprodlm_shortcode_download_content_filter", $content);
-			} 
-			else 
-			{
-				$content = '[' . __( 'Download not found', 'download-monitor' ) . ']';
+
+				$membership_required_content = ' (' . __('Membership Required','pmprodlm') . ': ' . $download_membership_levels[1] . ')';
+
+				// Fitler to optionally hide the 'Membership Required' content from output.
+				$content = $content . apply_filters( 'pmprodlm_shortcode_download_show_membership_required_filter', $membership_required_content );
+
+				// Filter to override the content output.
+				$content = apply_filters( 'pmprodlm_shortcode_download_content_filter', $content );
 			}
+		} catch ( Exception $exception ) {
+			// No download with ID found.
+			$content = '[' . __( 'Download not found', 'download-monitor' ) . ']';
 		}
 	}
 	return $content;
 }
-add_filter('dlm_shortcode_download_content', 'pmprodlm_shortcode_download_content', 10, 3);
+add_filter( 'dlm_shortcode_download_content', 'pmprodlm_shortcode_download_content', 10, 3 );
 
 function pmprodlm_dlm_no_access_after_message($download) {
 	global $current_user;
@@ -178,8 +185,8 @@ function pmprodlm_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-download-monitor.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plus-add-ons/pmpro-download-monitor/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
-			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/pmpro-download-monitor/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
 	}
