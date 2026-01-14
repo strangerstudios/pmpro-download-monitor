@@ -156,13 +156,13 @@ function pmprodlm_dlm_no_access_after_message($download) {
 			if($current_user->ID)
 			{
 				//not a member
-				$newcontent = apply_filters("pmpro_non_member_text_filter", stripslashes(pmpro_getOption("nonmembertext")));
+				$newcontent = apply_filters("pmpro_non_member_text_filter", stripslashes(get_option("pmpro_nonmembertext")));
 				$content .= $pmpro_content_message_pre . str_replace($sr_search, $sr_replace, $newcontent) . $pmpro_content_message_post;
 			}
 			else
 			{
 				//not logged in!
-				$newcontent = apply_filters("pmpro_not_logged_in_text_filter", stripslashes(pmpro_getOption("notloggedintext")));
+				$newcontent = apply_filters("pmpro_not_logged_in_text_filter", stripslashes(get_option("pmpro_notloggedintext")));
 				$content .= $pmpro_content_message_pre . str_replace($sr_search, $sr_replace, $newcontent) . $pmpro_content_message_post;
 			}
 		}
