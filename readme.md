@@ -1,7 +1,6 @@
 ![](pmpro-download-monitor-banner.png)
 
-# [Paid Memberships Pro - Download Monitor Integration](Paid Memberships Pro - Download Monitor Integration) #
-[comment]: # (Generate badges from shields.io, only works for .org plugins to get other stats etc. We'd have to create our own endpoints for Premium plugins)
+# [Paid Memberships Pro - Download Monitor Integration](https://www.paidmembershipspro.com/add-ons/pmpro-download-monitor/) #
 
 ![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg?style=flat-square)
 
