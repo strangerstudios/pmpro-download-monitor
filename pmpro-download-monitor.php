@@ -11,6 +11,10 @@
  * License: GPLv2 or later
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Add the dlm_download CPT to the list of PMPro restrictable post types.
  *
