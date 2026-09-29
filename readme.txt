@@ -2,9 +2,9 @@
 Contributors: strangerstudios, paidmembershipspro
 Tags: paid memberships pro, pmpro, membership, memberships, download monitor, restrict downloads
 Requires at least: 5.4
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,9 @@ This is an official Add On for [Paid Memberships Pro](https://www.paidmembership
 1. Save your changes by clicking the "Update" button (or "Publish" if you are creating a new download).
 
 == Changelog ==
+= 1.0.1 - 2026-09-29 =
+* SECURITY: Improved sanitization and escaping throughout the plugin to resolve Plugin Check security findings. #13 (@dparker1005)
+
 = 1.0 - 2026-02-25 =
 * BUG FIX/ENHANCEMENT: Download Monitor blocks now correctly filter output for restricted downloads, showing restricted templates instead of download links for non-members. #12 (@dparker1005)
 * BUG FIX/ENHANCEMENT: Overhauled the template system for membership-restricted downloads. Templates now only render the restricted state and match Download Monitor v4.9.6 patterns including `DLM_Utils` attributes, Gutenberg `className` support, and `before/after` link hooks. #12 (@dparker1005)
